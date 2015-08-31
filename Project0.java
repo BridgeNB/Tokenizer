@@ -12,7 +12,12 @@ public class Project0{
 	
 	public String read_input(Scanner in){
 		/*TODO: Read input until a '?' is found */
+		while (in.hasNextLine()) {
+			input = in.nextLine();
+			System.out.printLn("Input is " + input);
+		}
 		
+		return input;		
 	}
 	
 	public void print_tokens(ArrayList<Token> tokens) {
