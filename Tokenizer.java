@@ -10,63 +10,58 @@ public class Tokenizer{
 		Token newElement;
 		// Convert input string to arraylist for further manipulation
 		ArrayList<String> candidates = new ArrayList<String>();
+		ArrayList<String> cd_integer = new ArrayList<String>();
+		
 		
 //		String[] tokenNum = input.split("[\\p{Punct}\\s]+");
 		String[] tokenCan = input.split("");
 		
-		// Cancanate integer number
-		for (int i = 0; i < tokenCan.length - 1; i++) {
-			
-			if (tokenCan[i].matches("\\d+") && tokenCan[i + 1].matches("\\d+")) {
-				tokenCan[i+1] = tokenCan[i] + tokenCan[i+1];
-				tokenCan[i] ="";
+		// Parse integer elements of input
+		tokenCan = parseInteger (tokenCan);
+		// Clean empty strings in arraylist
+		candidates = cleanEmptyString(tokenCan); 
+		// Parse float elements of input
+		String[] IntTokenCan = new String[candidates.size()]; 
+		IntTokenCan = (String[]) candidates.toArray(IntTokenCan);
+		String[] FloTokenCan = parseFloat(IntTokenCan);
+		// Clean empty strings in arraylist
+		candidates = cleanEmptyString(FloTokenCan); 
+		
+		
+		for (String s1: candidates) {
+			s1 = s1.replaceAll("\\s+","");
+			if (!s1.equals("")) {
+				cd_integer.add(s1);
 			}
-			
-			System.out.print("the " + i + " element is " + tokenCan[i] +"\n");
+			System.out.println("float round " + s1);
 		}
 		
-		// Cancanate float number
-		for (int j = 1; j < tokenCan.length - 1; j++) {
-			
-			if (tokenCan[j - 1].matches("\\d+") &&
-					tokenCan[j].matches(".") && tokenCan[j + 1].matches("\\d+")) {
-				tokenCan[j + 1] = tokenCan[j - 1] + tokenCan[j] + tokenCan[j + 1];
-				tokenCan[j - 1] = "";
-				tokenCan[j] = "";
-			}
-			
-			System.out.print("the " + j + " element is " + tokenCan[j] +"\n");
-		}
+		System.out.println("candidates size is" + candidates.size());
 		
-		// Remove empty string from the candidate string array
-		for (String s : tokenCan) {
-			if (!s.equals("")) {
-				candidates.add(s);
-			}			
-		}
 		
 		// test final candiates array
-		for (String t : candidates)
+		for (String t : candidates) {
 			System.out.println("xxx " + t);
-		// further parse needed
-		
-		
-		
-//		newElement = new Token(11, tokenCan[j]);
-//		tokens.add(newElement);
 			
-//		// Obtain seperated token digits
-//		for(int i = 0; i < tokenCan.length; i++) {
-//			System.out.print("the " + i + " element is " + tokenCan[i] +"\n");
-//			candidates.add(tokenCan[i]);
-//			
-//			newElement = new Token(11, tokenCan[i]);
-//			tokens.add(newElement);
-//		}
+			if (t.matches("\\d+")) {
+				// Parse integer number
+				int integer_token = Integer.parseInt(t);
+				System.out.println("It is a integer " + integer_token);
+				newElement = new Token(11, integer_token);
+				tokens.add(newElement);
+			} else if (t.matches("\\d*\\.\\d+")) {
+				// Parse decimal number
+				float float_token = Float.parseFloat(t);
+				System.out.println("It is a float " + float_token);
+				newElement = new Token(12, float_token);
+				tokens.add(newElement);
+			} else {
+				System.out.println("It is a symbol " + t);
+				newElement = symbolAnalysis(t);
+				tokens.add(newElement);
+			}
+		}
 		
-		Token t1 = symbolAnalysis("+");
-		//System.out.print("Token arraylist size: " + tokens.size());
-
 		return tokens;
 	}
 	
@@ -118,27 +113,72 @@ public class Tokenizer{
 		Token s = null;
 		
 		if(symbol.compareTo("?") == 0) 
-			s = new Token(20,0);
+			s = new Token(20,symbol);
 		if(symbol.compareTo("(") == 0)
-			s = new Token(21,0);
+			s = new Token(21,symbol);
 		if(symbol.compareTo(")") == 0) 
-			s = new Token(22,0);
+			s = new Token(22,symbol);
 		if(symbol.compareTo("+") == 0)
-			s = new Token(23,0);
+			s = new Token(23,symbol);
 		if(symbol.compareTo("-") == 0) 
-			s = new Token(24,0);
+			s = new Token(24,symbol);
 		if(symbol.compareTo("*") == 0)
-			s = new Token(25,0);
+			s = new Token(25,symbol);
 		if(symbol.compareTo("/") == 0) 
-			s = new Token(25,0);
+			s = new Token(25,symbol);
 		if(symbol.compareTo(".") == 0)
-			s = new Token(27,0);
+			s = new Token(27,symbol);
 		if(symbol.compareTo(";") == 0) 
-			s = new Token(28,0);
+			s = new Token(28,symbol);
 		if(symbol.compareTo("=") == 0)
-			s = new Token(29,0);
+			s = new Token(29,symbol);
 		
 		return s;
 	}
+	
+	public ArrayList<String> cleanEmptyString (String[] dirtyString) {
+		ArrayList<String> nonEmpStrings = new ArrayList<String>();
+		
+		// Remove empty string from the candidate string array
+		for (String s : dirtyString) {
+			// Replace multiple spaces by empty string
+			s = s.replaceAll("\\s+", "");
+			if (!s.equals("")) {
+				nonEmpStrings.add(s);
+			}			
+		}
+		
+		return nonEmpStrings;
+	}
+	
+	// Parse integer element in the array
+	public String[] parseInteger (String[] unparsedArray) {
+		for (int i = 0; i < unparsedArray.length - 1; i++) {
+			
+			if (unparsedArray[i].matches("\\d+") && unparsedArray[i + 1].matches("\\d+")) {
+				unparsedArray[i+1] = unparsedArray[i] + unparsedArray[i+1];
+				unparsedArray[i] ="";
+			}
+
+		}	
+		return unparsedArray;
+	}
+	
+	// Parse float element in the array
+	public String[] parseFloat (String[] unparsedArray) {
+
+		for (int j = 1; j < unparsedArray.length - 1; j++) {
+
+			if (unparsedArray[j - 1].matches("\\d+") &&
+					unparsedArray[j].matches(".") && unparsedArray[j + 1].matches("\\d+")) {
+				unparsedArray[j + 1] = unparsedArray[j - 1] + unparsedArray[j] + unparsedArray[j + 1];
+				unparsedArray[j] = "";
+				unparsedArray[j - 1] = "";
+			}
+		}
+		
+		return unparsedArray;
+	}
+
 }
 
