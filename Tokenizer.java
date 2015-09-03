@@ -16,17 +16,20 @@ public class Tokenizer{
 //		String[] tokenNum = input.split("[\\p{Punct}\\s]+");
 		String[] tokenCan = input.split("");
 		
+		
 		// Parse integer elements of input
-		tokenCan = parseInteger (tokenCan);
+		tokenCan = parseInteger (tokenCan);	
+		
 		// Clean empty strings in arraylist
 		candidates = cleanEmptyString(tokenCan); 
+		
 		// Parse float elements of input
 		String[] IntTokenCan = new String[candidates.size()]; 
 		IntTokenCan = (String[]) candidates.toArray(IntTokenCan);
 		String[] FloTokenCan = parseFloat(IntTokenCan);
+		
 		// Clean empty strings in arraylist
 		candidates = cleanEmptyString(FloTokenCan); 
-		
 		
 		for (String s1: candidates) {
 			s1 = s1.replaceAll("\\s+","");
@@ -159,7 +162,7 @@ public class Tokenizer{
 				unparsedArray[i+1] = unparsedArray[i] + unparsedArray[i+1];
 				unparsedArray[i] ="";
 			}
-
+			
 		}	
 		return unparsedArray;
 	}
@@ -170,7 +173,7 @@ public class Tokenizer{
 		for (int j = 1; j < unparsedArray.length - 1; j++) {
 
 			if (unparsedArray[j - 1].matches("\\d+") &&
-					unparsedArray[j].matches(".") && unparsedArray[j + 1].matches("\\d+")) {
+					unparsedArray[j].matches("\\.") && unparsedArray[j + 1].matches("\\d+")) {
 				unparsedArray[j + 1] = unparsedArray[j - 1] + unparsedArray[j] + unparsedArray[j + 1];
 				unparsedArray[j] = "";
 				unparsedArray[j - 1] = "";
