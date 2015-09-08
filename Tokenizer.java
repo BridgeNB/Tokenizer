@@ -10,18 +10,31 @@ public class Tokenizer{
 		Token newElement;
 		// Convert input string to arraylist for further manipulation
 		ArrayList<String> candidates = new ArrayList<String>();
-		ArrayList<String> cd_integer = new ArrayList<String>();
 		
-		
-//		String[] tokenNum = input.split("[\\p{Punct}\\s]+");
 		String[] tokenCan = input.split("");
 		
-		
-		// Parse integer elements of input
-		tokenCan = parseInteger (tokenCan);	
+		// parse alphabet inside takenCan
+		for(int k = 0; k < tokenCan.length; k++) {
+			if (tokenCan[k].matches("[A-Za-z]"))
+				tokenCan[k] = "";
+		}
 		
 		// Clean empty strings in arraylist
 		candidates = cleanEmptyString(tokenCan); 
+		
+		// test cleanEmptyString
+		for (String r: candidates) {
+			System.out.println("Test nonempty string" + r);
+		}
+		
+		// Parse integer elements of input
+		String[] preTokenCan = new String[candidates.size()]; 
+		preTokenCan = (String[]) candidates.toArray(tokenCan);
+		String[] aftTokenCan = parseInteger(preTokenCan);
+//		tokenCan = parseInteger (aftTokenCan);	
+		
+		// Clean empty strings in arraylist
+		candidates = cleanEmptyString(aftTokenCan); 
 		
 		// Parse float elements of input
 		String[] IntTokenCan = new String[candidates.size()]; 
@@ -30,14 +43,6 @@ public class Tokenizer{
 		
 		// Clean empty strings in arraylist
 		candidates = cleanEmptyString(FloTokenCan); 
-		
-		for (String s1: candidates) {
-			s1 = s1.replaceAll("\\s+","");
-			if (!s1.equals("")) {
-				cd_integer.add(s1);
-			}
-			System.out.println("float round " + s1);
-		}
 		
 		System.out.println("candidates size is" + candidates.size());
 		
@@ -145,10 +150,14 @@ public class Tokenizer{
 		// Remove empty string from the candidate string array
 		for (String s : dirtyString) {
 			// Replace multiple spaces by empty string
-			s = s.replaceAll("\\s+", "");
-			if (!s.equals("")) {
+			if (s.matches("\\s+"))
+				System.out.println("1");
+			
+			if (s.matches(""))
+				System.out.println("2");
+		
+			if (!s.matches("\\s+") && !s.matches(""))
 				nonEmpStrings.add(s);
-			}			
 		}
 		
 		return nonEmpStrings;
@@ -162,6 +171,8 @@ public class Tokenizer{
 				unparsedArray[i+1] = unparsedArray[i] + unparsedArray[i+1];
 				unparsedArray[i] ="";
 			}
+			
+			System.out.println("ParseInt + " + unparsedArray[i]);
 			
 		}	
 		return unparsedArray;
@@ -178,6 +189,8 @@ public class Tokenizer{
 				unparsedArray[j] = "";
 				unparsedArray[j - 1] = "";
 			}
+			
+			System.out.println("Parse float + " + unparsedArray[j]);
 		}
 		
 		return unparsedArray;
